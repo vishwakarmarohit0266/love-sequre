@@ -3,7 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta http-equiv="Content-Security-Policy"
+content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: https:;
+  font-src 'self' https: data:;
+  connect-src 'self';
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  frame-ancestors 'none';
+  upgrade-insecure-requests;
+">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Referrer-Policy" content="no-referrer">
+<meta http-equiv="Permissions-Policy"
+content="camera=(), microphone=(), geolocation=(), payment=()">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="robots" content="noindex,nofollow">
 <title>My Secret Love Diary 🔒</title>
 
 <style>
@@ -36,6 +55,11 @@ body{
     min-height:100vh;
     color:var(--text);
     overflow-x:hidden;
+}
+
+body {
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 @keyframes bgMove{
@@ -717,7 +741,219 @@ document.addEventListener("keydown",e=>{
         e.preventDefault();
     }
 });
+
+// New Script JS
+
+/* =========================
+   🚫 RIGHT CLICK BLOCK
+========================= */
+
+document.addEventListener('contextmenu', e => {
+    e.preventDefault();
+});
+
+/* =========================
+   🚫 INSPECT SHORTCUT BLOCK
+========================= */
+
+document.addEventListener('keydown', e => {
+
+    if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+        (e.ctrlKey && e.key === 'U') ||
+        (e.ctrlKey && e.key === 'S')
+    ) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        document.body.innerHTML = `
+        <div style="
+            background:black;
+            color:red;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:2rem;
+            font-family:sans-serif;
+            text-align:center;
+            padding:20px;
+        ">
+        ⚠️ Unauthorized Access Blocked ⚠️
+        </div>`;
+    }
+});
+
+/* =========================
+   ☠️ DEVTOOLS DETECTOR
+========================= */
+
+(function () {
+
+    function detectDevTools() {
+
+        const widthThreshold = window.outerWidth - window.innerWidth > 160;
+        const heightThreshold = window.outerHeight - window.innerHeight > 160;
+
+        if (widthThreshold || heightThreshold) {
+
+            sessionStorage.clear();
+
+            document.body.innerHTML = `
+            <div style="
+                background:#000;
+                color:#ff0033;
+                height:100vh;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                flex-direction:column;
+                font-family:sans-serif;
+                text-align:center;
+            ">
+                <h1>🔒 Security Violation Detected</h1>
+                <p>Developer tools are not allowed.</p>
+            </div>`;
+
+            window.location.replace("https://google.com");
+        }
+    }
+
+    setInterval(detectDevTools, 1000);
+})();
+
+/* =========================
+   🧨 DEBUGGER TRAP
+========================= */
+
+setInterval(() => {
+
+    const before = Date.now();
+
+    debugger;
+
+    const after = Date.now();
+
+    if (after - before > 100) {
+
+        document.body.innerHTML = `
+        <div style="
+            background:black;
+            color:red;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:2rem;
+            text-align:center;
+            font-family:sans-serif;
+        ">
+        ⚠️ Debugging Blocked ⚠️
+        </div>`;
+
+        while(true) {
+            debugger;
+        }
+    }
+
+}, 500);
+
+// Verification worng code
+
+async function verifyPassword() {
+
+    const pass = document.getElementById('passwordInput').value;
+
+    const hash = await sha256(pass);
+
+    const saved = localStorage.getItem(PASS_HASH_KEY);
+
+    if (hash === saved) {
+
+        sessionStorage.setItem('diary_session', pass);
+
+        closeModal();
+
+        renderEntries();
+
+    } else {
+
+        document.body.innerHTML = `
+        <div style="
+            background:#000;
+            color:red;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-direction:column;
+            font-family:sans-serif;
+        ">
+            <h1>❌ Access Denied</h1>
+            <p>Redirecting...</p>
+        </div>`;
+
+        setTimeout(() => {
+            window.location.href = 'https://example.com';
+        }, 2000);
+    }
+}
+
+// Disable Dragging Images
+
+document.addEventListener('dragstart', e => {
+    e.preventDefault();
+});
+
+// Disable Copy
+
+document.addEventListener('copy', e => {
+    e.preventDefault();
+});
+
+// Auto Self Destruct Session
+
+setTimeout(() => {
+
+    sessionStorage.clear();
+
+    localStorage.removeItem('diary_temp');
+
+    alert('Session expired 🔒');
+
+    location.reload();
+
+}, 300000);
+
+//  HTTPS Force
+
+if (location.protocol !== 'https:') {
+    location.replace(
+        'https://' + location.host + location.pathname
+    );
+}
+
+// Console Fake Spam
+
+setInterval(() => {
+
+    console.clear();
+
+    console.log('%cSTOP!', 'color:red;font-size:50px');
+
+    console.log(
+        '%cThis is a protected system.',
+        'font-size:20px;color:white;background:black;padding:10px;'
+    );
+
+}, 1000);
+
 </script>
 
 </body>
 </html>
+
+
