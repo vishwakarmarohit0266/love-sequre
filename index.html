@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Secret Love Diary 🔒</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    transition:0.3s ease;
+}
+
+:root{
+    --primary:#ff4b6e;
+    --secondary:#ff8fa3;
+    --bg:#fff5f7;
+    --card:rgba(255,255,255,0.7);
+    --text:#111;
+}
+
+.dark{
+    --bg:#0f0f0f;
+    --card:rgba(0,0,0,0.6);
+    --text:#fff;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(-45deg,#ff4b6e,#ff8fa3,#ffd6e0,#ffeef2);
+    background-size:400% 400%;
+    animation:bgMove 10s ease infinite;
+    min-height:100vh;
+    color:var(--text);
+    overflow-x:hidden;
+}
+
+@keyframes bgMove{
+    0%{background-position:0%}
+    50%{background-position:100%}
+    100%{background-position:0%}
+}
+
+.blob{
+    position:fixed;
+    width:300px;
+    height:300px;
+    background:radial-gradient(circle,#ff8fa3,transparent);
+    filter:blur(80px);
+    opacity:0.5;
+    z-index:-1;
+    animation:blob 10s infinite alternate;
+}
+
+@keyframes blob{
+    from{transform:translate(-50px,-50px)}
+    to{transform:translate(50px,50px)}
+}
+
+.container{
+    width:90%;
+    max-width:430px;
+    margin:90px auto;
+    padding:30px;
+    background:var(--card);
+    backdrop-filter:blur(15px);
+    border-radius:30px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.2);
+    border:1px solid rgba(255,255,255,0.2);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo h1{
+    font-size:2rem;
+    color:var(--primary);
+}
+
+textarea{
+    width:100%;
+    height:180px;
+    border:none;
+    outline:none;
+    resize:none;
+    padding:18px;
+    border-radius:20px;
+    font-size:1rem;
+    background:rgba(255,255,255,0.8);
+    margin-bottom:20px;
+}
+
+.buttons{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+button{
+    flex:1;
+    border:none;
+    padding:14px;
+    border-radius:50px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:0.95rem;
+}
+
+.save-btn{
+    background:var(--primary);
+    color:white;
+}
+
+.view-btn{
+    background:white;
+    color:var(--primary);
+}
+
+.delete-btn{
+    background:#111;
+    color:white;
+}
+
+button:hover{
+    transform:translateY(-2px) scale(1.02);
+}
+
+#status{
+    margin-top:15px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.entry-box{
+    margin-top:30px;
+    display:none;
+}
+
+.entry{
+    background:rgba(255,255,255,0.7);
+    padding:15px;
+    border-radius:20px;
+    margin-bottom:15px;
+    word-wrap:break-word;
+}
+
+.entry-date{
+    font-size:0.8rem;
+    color:gray;
+    margin-bottom:6px;
+    display:block;
+}
+
+.theme{
+    position:fixed;
+    top:15px;
+    right:15px;
+    background:var(--primary);
+    color:white;
+    padding:12px;
+    border-radius:50%;
+    cursor:pointer;
+    z-index:999;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.modal-content{
+    background:white;
+    width:90%;
+    max-width:350px;
+    padding:25px;
+    border-radius:25px;
+    text-align:center;
+}
+
+.modal input{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:2px solid #ddd;
+    margin:15px 0;
+    font-size:1rem;
+}
+
+.footer{
+    text-align:center;
+    margin-top:30px;
+    color:gray;
+    font-size:0.9rem;
+}
+
+.heart{
+    position:fixed;
+    bottom:-20px;
+    pointer-events:none;
+    animation:floatUp linear forwards;
+}
+
+@keyframes floatUp{
+    to{
+        transform:translateY(-120vh) rotate(360deg);
+        opacity:0;
+    }
+}
+
+@media(max-width:480px){
+    .buttons{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="blob" style="top:10%;left:10%"></div>
+<div class="blob" style="bottom:10%;right:10%"></div>
+
+<div class="theme" onclick="toggleTheme()">🌙</div>
+
+<div class="container">
+
+<div class="logo">
+<h1>My Secret Love Diary 🔒</h1>
+</div>
+
+<textarea id="diaryInput"
+placeholder="Write your secret feelings here... 💖"></textarea>
+
+<div class="buttons">
+<button class="save-btn" onclick="saveEntry()">Save 💖</button>
+<button class="view-btn" onclick="openModal()">Unlock 📖</button>
+<button class="delete-btn" onclick="deleteAll()">Delete ☠️</button>
+</div>
+
+<p id="status"></p>
+
+<div id="entriesBox" class="entry-box">
+<h2 style="margin-bottom:20px;">💌 Your Memories</h2>
+<div id="entries"></div>
+</div>
+
+<div class="footer">
+Everything For You 💞
+</div>
+
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal" id="modal">
+<div class="modal-content">
+
+<h2>🔒 Secret Access</h2>
+
+<input type="password"
+id="passwordInput"
+placeholder="Enter Password">
+
+<div class="buttons">
+<button onclick="closeModal()">Cancel</button>
+<button class="save-btn" onclick="verifyPassword()">Unlock</button>
+</div>
+
+</div>
+</div>
+
+<script>
+/* =========================
+   🔐 SECURE LOVE DIARY
+========================= */
+
+const STORAGE_KEY = "secure_love_diary";
+const PASS_HASH_KEY = "love_diary_pass";
+const THEME_KEY = "theme";
+
+/* =========================
+   🌙 THEME
+========================= */
+
+(function(){
+    const theme = localStorage.getItem(THEME_KEY);
+
+    if(theme === "dark"){
+        document.body.classList.add("dark");
+    }
+})();
+
+function toggleTheme(){
+
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        THEME_KEY,
+        document.body.classList.contains("dark")
+        ? "dark"
+        : "light"
+    );
+}
+
+/* =========================
+   🔐 CRYPTO
+========================= */
+
+function bufferToBase64(buffer){
+    return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+}
+
+function base64ToBuffer(base64){
+    return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+}
+
+async function sha256(text){
+
+    const data = new TextEncoder().encode(text);
+
+    const hash = await crypto.subtle.digest("SHA-256", data);
+
+    return bufferToBase64(hash);
+}
+
+async function getKey(password,salt){
+
+    const enc = new TextEncoder();
+
+    const keyMaterial = await crypto.subtle.importKey(
+        "raw",
+        enc.encode(password),
+        {name:"PBKDF2"},
+        false,
+        ["deriveKey"]
+    );
+
+    return crypto.subtle.deriveKey(
+        {
+            name:"PBKDF2",
+            salt,
+            iterations:100000,
+            hash:"SHA-256"
+        },
+        keyMaterial,
+        {
+            name:"AES-GCM",
+            length:256
+        },
+        false,
+        ["encrypt","decrypt"]
+    );
+}
+
+async function encryptText(text,password){
+
+    const enc = new TextEncoder();
+
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    const key = await getKey(password,salt);
+
+    const encrypted = await crypto.subtle.encrypt(
+        {
+            name:"AES-GCM",
+            iv
+        },
+        key,
+        enc.encode(text)
+    );
+
+    return {
+        salt:bufferToBase64(salt),
+        iv:bufferToBase64(iv),
+        data:bufferToBase64(encrypted)
+    };
+}
+
+async function decryptText(encrypted,password){
+
+    try{
+
+        const salt = base64ToBuffer(encrypted.salt);
+        const iv = base64ToBuffer(encrypted.iv);
+        const data = base64ToBuffer(encrypted.data);
+
+        const key = await getKey(password,salt);
+
+        const decrypted = await crypto.subtle.decrypt(
+            {
+                name:"AES-GCM",
+                iv
+            },
+            key,
+            data
+        );
+
+        return new TextDecoder().decode(decrypted);
+
+    }catch{
+        return null;
+    }
+}
+
+/* =========================
+   🔑 PASSWORD SETUP
+========================= */
+
+async function setupPassword(){
+
+    let saved = localStorage.getItem(PASS_HASH_KEY);
+
+    if(!saved){
+
+        let pass = prompt("Create your secret diary password 🔐");
+
+        if(!pass || pass.length < 4){
+
+            alert("Weak password 😭");
+
+            return setupPassword();
+        }
+
+        const hash = await sha256(pass);
+
+        localStorage.setItem(PASS_HASH_KEY,hash);
+
+        alert("Password Created 💖");
+    }
+}
+
+setupPassword();
+
+/* =========================
+   💬 STATUS
+========================= */
+
+function showMessage(msg,color="white"){
+
+    const s = document.getElementById("status");
+
+    s.innerText = msg;
+    s.style.color = color;
+
+    setTimeout(()=>{
+        s.innerText = "";
+    },4000);
+}
+
+/* =========================
+   💾 SAVE ENTRY
+========================= */
+
+async function saveEntry(){
+
+    const input = document.getElementById("diaryInput");
+
+    const text = input.value.trim();
+
+    if(!text){
+
+        showMessage("Write something 💔","red");
+
+        return;
+    }
+
+    const pass = sessionStorage.getItem("diary_session");
+
+    if(!pass){
+
+        showMessage("Unlock diary first 🔒","red");
+
+        return;
+    }
+
+    const encrypted = await encryptText(text,pass);
+
+    const all =
+        JSON.parse(localStorage.getItem(STORAGE_KEY))
+        || [];
+
+    all.push({
+        date:new Date().toLocaleString(),
+        encrypted
+    });
+
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(all));
+
+    input.value = "";
+
+    burst();
+
+    showMessage("Memory Encrypted 🔐💖","lime");
+}
+
+/* =========================
+   📖 VIEW
+========================= */
+
+function openModal(){
+
+    document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){
+
+    document.getElementById("modal").style.display = "none";
+}
+
+async function verifyPassword(){
+
+    const pass =
+        document.getElementById("passwordInput").value;
+
+    const hash = await sha256(pass);
+
+    const saved =
+        localStorage.getItem(PASS_HASH_KEY);
+
+    if(hash === saved){
+
+        sessionStorage.setItem(
+            "diary_session",
+            pass
+        );
+
+        closeModal();
+
+        renderEntries();
+
+        showMessage("Diary Unlocked 💖","lime");
+
+    }else{
+
+        showMessage("Wrong Password 💔","red");
+    }
+}
+
+async function renderEntries(){
+
+    const pass =
+        sessionStorage.getItem("diary_session");
+
+    if(!pass)return;
+
+    const data =
+        JSON.parse(localStorage.getItem(STORAGE_KEY))
+        || [];
+
+    const box =
+        document.getElementById("entriesBox");
+
+    const entries =
+        document.getElementById("entries");
+
+    entries.innerHTML = "";
+
+    if(data.length === 0){
+
+        entries.innerHTML =
+        "<p>No memories yet 💔</p>";
+
+    }else{
+
+        for(const item of [...data].reverse()){
+
+            const text =
+                await decryptText(
+                    item.encrypted,
+                    pass
+                );
+
+            const div =
+                document.createElement("div");
+
+            div.className = "entry";
+
+            div.innerHTML = `
+            <span class="entry-date">
+            ${item.date}
+            </span>
+            <p>${text}</p>
+            `;
+
+            entries.appendChild(div);
+        }
+    }
+
+    box.style.display = "block";
+}
+
+/* =========================
+   ☠️ DELETE
+========================= */
+
+function deleteAll(){
+
+    const confirmDelete =
+        confirm("Delete all memories forever? 😭");
+
+    if(confirmDelete){
+
+        localStorage.removeItem(STORAGE_KEY);
+
+        location.reload();
+    }
+}
+
+/* =========================
+   ✨ EFFECTS
+========================= */
+
+const emojis = [
+"💖","💕","✨","💘","🩷","🌸"
+];
+
+setInterval(()=>{
+
+    const heart =
+        document.createElement("div");
+
+    heart.className = "heart";
+
+    heart.innerText =
+        emojis[Math.floor(Math.random()*emojis.length)];
+
+    heart.style.left =
+        Math.random()*100 + "vw";
+
+    heart.style.fontSize =
+        (15 + Math.random()*25) + "px";
+
+    heart.style.animationDuration =
+        (5 + Math.random()*5) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(()=>{
+        heart.remove();
+    },10000);
+
+},600);
+
+function burst(){
+
+    for(let i=0;i<20;i++){
+
+        let b = document.createElement("div");
+
+        b.className = "heart";
+
+        b.innerText = "✨";
+
+        b.style.left = "50vw";
+
+        b.style.fontSize = "20px";
+
+        b.style.animationDuration = "1s";
+
+        document.body.appendChild(b);
+
+        setTimeout(()=>{
+            b.remove();
+        },1000);
+    }
+}
+
+/* =========================
+   🔒 AUTO LOCK
+========================= */
+
+let lockTimer;
+
+function resetTimer(){
+
+    clearTimeout(lockTimer);
+
+    lockTimer = setTimeout(()=>{
+
+        sessionStorage.removeItem("diary_session");
+
+        showMessage("Diary Auto Locked 🔒","orange");
+
+    },60000);
+}
+
+document.addEventListener("mousemove",resetTimer);
+document.addEventListener("keypress",resetTimer);
+
+resetTimer();
+
+/* =========================
+   🚫 DEVTOOLS BLOCK
+========================= */
+
+document.addEventListener("contextmenu",
+e => e.preventDefault()
+);
+
+document.addEventListener("keydown",e=>{
+
+    if(
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.shiftKey && e.key === "J") ||
+        (e.ctrlKey && e.key === "U")
+    ){
+        e.preventDefault();
+    }
+});
+</script>
+
+</body>
+</html>
